@@ -1,0 +1,10 @@
+2013-06-18: RELEASE 1.1.0
+            ------------------------
+            * Modified policy for Debian
+            * Tested on Debian wheezy
+
+2009-10-15: RELEASE 1.0.10
+            ------------------------
+            * Original policy for RHEL/CentOS by Stuart Cianos
+            * http://sourceforge.net/projects/selinuxnginx/
+

@@ -1,0 +1,100 @@
+###############################################################################
+# SELinux Reference Policy Module for Nginx on Debian
+#
+# Copyright 2013 by Joe Johnston <joe@simple10.com>
+# Copyright 2009 by Stuart Cianos <scianos@alphavida.com>
+#
+# Licensed under GNU General Public License 3.0 or later.
+# Some rights reserved. See COPYING, AUTHORS.
+#
+# @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+###############################################################################
+
+
+policy_module(nginx,1.1.0)
+
+########################################
+#
+# Declarations
+#
+require {
+	type home_root_t;
+	type user_home_dir_t;
+	type httpd_sys_content_t;
+	type fs_t;
+	type node_t;
+	class process { signal sigchld };
+	class unix_stream_socket { write connectto };
+	class capability { setuid kill setgid net_bind_service };
+	class tcp_socket { write name_bind name_connect create node_bind };
+	class dir { write search relabelto read remove_name getattr add_name };
+	class file { execute setattr read lock create execute_no_trans write getattr unlink append };
+	class filesystem { associate };
+}
+
+type nginx_t;
+type nginx_exec_t;
+domain_type(nginx_t)
+init_daemon_domain(nginx_t, nginx_exec_t)
+
+# conf files
+type nginx_conf_t;
+files_type(nginx_conf_t)
+
+# var/lib files
+type nginx_var_lib_t;
+files_type(nginx_var_lib_t)
+
+# log files
+type nginx_var_log_t;
+logging_log_file(nginx_var_log_t)
+
+# pid files
+type nginx_var_run_t;
+files_pid_file(nginx_var_run_t)
+
+########################################
+#
+# nginx local policy
+#
+
+files_read_etc_files(nginx_t)
+libs_use_ld_so(nginx_t)
+libs_use_shared_libs(nginx_t)
+miscfiles_read_localization(nginx_t)
+allow nginx_t self:fifo_file { read write };
+allow nginx_t self:unix_stream_socket create_stream_socket_perms;
+allow nginx_t nginx_var_lib_t:file create_file_perms;
+allow nginx_t nginx_var_lib_t:sock_file create_file_perms;
+allow nginx_t nginx_var_lib_t:dir create_dir_perms;
+files_var_lib_filetrans(nginx_t,nginx_var_lib_t, { file dir sock_file })
+allow nginx_t nginx_var_log_t:file create_file_perms;
+allow nginx_t nginx_var_log_t:sock_file create_file_perms;
+allow nginx_t nginx_var_log_t:dir { rw_dir_perms setattr };
+logging_log_filetrans(nginx_t,nginx_var_log_t,{ sock_file file dir })
+allow nginx_t nginx_var_run_t:file manage_file_perms;
+allow nginx_t nginx_var_run_t:sock_file manage_file_perms;
+allow nginx_t nginx_var_run_t:dir rw_dir_perms;
+files_pid_filetrans(nginx_t,nginx_var_run_t, { file sock_file })
+sysnet_dns_name_resolve(nginx_t)
+corenet_tcp_sendrecv_all_if(nginx_t)
+corenet_tcp_sendrecv_all_nodes(nginx_t)
+corenet_tcp_sendrecv_all_ports(nginx_t)
+corenet_all_recvfrom_unlabeled(nginx_t)
+corenet_tcp_connect_all_ports(nginx_t)
+corenet_tcp_bind_all_ports(nginx_t)
+corenet_tcp_bind_all_nodes(nginx_t)
+allow nginx_t self:tcp_socket { listen accept };
+init_use_fds(nginx_t)
+init_use_script_ptys(nginx_t)
+domain_use_interactive_fds(nginx_t)
+allow nginx_t fs_t:filesystem associate;
+allow nginx_t home_root_t:dir search;
+allow nginx_t user_home_dir_t:dir search;
+allow nginx_t httpd_sys_content_t:dir { read search getattr };
+allow nginx_t httpd_sys_content_t:file { read getattr open };
+allow nginx_t node_t:tcp_socket node_bind;
+allow nginx_t self:capability { setuid net_bind_service setgid };
+
+kernel_read_kernel_sysctls(nginx_t)
+kernel_read_system_state(nginx_t)

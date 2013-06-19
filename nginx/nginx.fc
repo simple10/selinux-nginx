@@ -1,0 +1,22 @@
+###############################################################################
+# SELinux Reference Policy Module for Nginx on Debian
+# 
+# Copyright 2013 by Joe Johnston <joe@simple10.com>
+# Copyright 2009 by Stuart Cianos <scianos@alphavida.com>
+# 
+# Licensed under GNU General Public License 3.0 or later. 
+# Some rights reserved. See COPYING, AUTHORS.
+# 
+# @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+###############################################################################
+
+# nginx executable will have:
+# label: system_u:object_r:nginx_exec_t
+# MLS sensitivity: s0
+# MCS categories: <none>
+
+/usr/sbin/nginx			--	gen_context(system_u:object_r:nginx_exec_t,s0)
+/var/run/nginx.pid			gen_context(system_u:object_r:nginx_var_run_t,s0)
+/var/log/nginx(/.*)?			gen_context(system_u:object_r:nginx_var_log_t,s0)
+/usr/share/nginx/www(/.*)?		gen_context(user_u:object_r:httpd_sys_content_t,s0)
+/etc/nginx(/.*)?			gen_context(system_u:object_r:etc_t,s0)

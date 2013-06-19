@@ -1,0 +1,36 @@
+###############################################################################
+# SELinux Reference Policy Module for Nginx on Debian
+# 
+# Copyright 2013 by Joe Johnston <joe@simple10.com>
+# Copyright 2009 by Stuart Cianos <scianos@alphavida.com>
+# 
+# Licensed under GNU General Public License 3.0 or later. 
+# Some rights reserved. See COPYING, AUTHORS.
+# 
+# @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+###############################################################################
+
+########################################
+## <summary>policy for nginx</summary>
+
+########################################
+## <summary>
+##	Execute a domain transition to run nginx.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`nginx_domtrans',`
+	gen_require(`
+		type nginx_t, nginx_exec_t;
+	')
+
+	domain_auto_trans($1,nginx_exec_t,nginx_t)
+
+	allow nginx_t $1:fd use;
+	allow nginx_t $1:fifo_file rw_file_perms;
+	allow nginx_t $1:process sigchld;
+')
