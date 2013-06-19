@@ -11,7 +11,7 @@ However, it should be substantially better than running Nginx without any policy
 Other Nginx policies worth evaluating...
 
 * https://github.com/heinoja9/selinux/tree/master/nginx_fe_local
-** RHEL/CentOS but easily modified for Debian
+  * RHEL/CentOS but easily modified for Debian
 
 
 ## Install
