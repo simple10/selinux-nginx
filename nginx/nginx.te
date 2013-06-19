@@ -23,7 +23,7 @@ require {
 	type httpd_sys_content_t;
 	type fs_t;
 	type node_t;
-	class process { signal sigchld };
+	class process { signal setrlimit };
 	class unix_stream_socket { write connectto };
 	class capability { setuid kill setgid net_bind_service };
 	class tcp_socket { write name_bind name_connect create node_bind };
@@ -95,6 +95,7 @@ allow nginx_t httpd_sys_content_t:dir { read search getattr };
 allow nginx_t httpd_sys_content_t:file { read getattr open };
 allow nginx_t node_t:tcp_socket node_bind;
 allow nginx_t self:capability { setuid net_bind_service setgid };
+allow nginx_t self:process { signal setrlimit };
 
 kernel_read_kernel_sysctls(nginx_t)
 kernel_read_system_state(nginx_t)
