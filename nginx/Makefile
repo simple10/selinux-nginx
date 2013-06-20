@@ -10,14 +10,12 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 ###############################################################################
 
-# installation paths
-SHAREDIR := /usr/share/selinux
+# From /usr/src/selinux-policy-src/doc/Makefile.example
 
 AWK ?= gawk
-NAME ?= $(strip $(shell $(AWK) -F= '/^SELINUXTYPE/{ print $$2 }' /etc/selinux/config))
 
-# Change to "-mcs" if MLS is not enabled
-TYPE ?= $(NAME)-mls
+NAME ?= $(shell $(AWK) -F= '/^SELINUXTYPE/{ print $$2 }' /etc/selinux/config)
+SHAREDIR ?= /usr/share/selinux
+HEADERDIR := $(SHAREDIR)/$(NAME)/include
 
-HEADERDIR := $(SHAREDIR)/default/include
 include $(HEADERDIR)/Makefile
