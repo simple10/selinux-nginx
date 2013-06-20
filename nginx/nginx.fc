@@ -18,5 +18,10 @@
 /usr/sbin/nginx			--	gen_context(system_u:object_r:nginx_exec_t,s0)
 /var/run/nginx.pid			gen_context(system_u:object_r:nginx_var_run_t,s0)
 /var/log/nginx(/.*)?			gen_context(system_u:object_r:nginx_var_log_t,s0)
-/usr/share/nginx/www(/.*)?		gen_context(user_u:object_r:httpd_sys_content_t,s0)
 /etc/nginx(/.*)?			gen_context(system_u:object_r:etc_t,s0)
+
+# Default location of nginx HTML files
+/usr/share/nginx/www(/.*)?  	gen_context(user_u:object_r:httpd_sys_content_t,s0)
+
+# Custom location of nginx HTML files
+/srv/nginx(/.*)?  	  gen_context(user_u:object_r:httpd_sys_content_t,s0)
