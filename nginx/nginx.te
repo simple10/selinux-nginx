@@ -41,7 +41,7 @@ init_daemon_domain(nginx_t, nginx_exec_t)
 type nginx_conf_t;
 files_type(nginx_conf_t)
 
-# var/lib files
+# cache files
 type nginx_var_lib_t;
 files_type(nginx_var_lib_t)
 
@@ -62,20 +62,24 @@ files_read_etc_files(nginx_t)
 libs_use_ld_so(nginx_t)
 libs_use_shared_libs(nginx_t)
 miscfiles_read_localization(nginx_t)
+
 allow nginx_t self:fifo_file { read write };
 allow nginx_t self:unix_stream_socket create_stream_socket_perms;
 allow nginx_t nginx_var_lib_t:file create_file_perms;
 allow nginx_t nginx_var_lib_t:sock_file create_file_perms;
-allow nginx_t nginx_var_lib_t:dir create_dir_perms;
+allow nginx_t nginx_var_lib_t:dir { search read open create_dir_perms };
 files_var_lib_filetrans(nginx_t,nginx_var_lib_t, { file dir sock_file })
+
 allow nginx_t nginx_var_log_t:file create_file_perms;
 allow nginx_t nginx_var_log_t:sock_file create_file_perms;
 allow nginx_t nginx_var_log_t:dir { rw_dir_perms setattr };
 logging_log_filetrans(nginx_t,nginx_var_log_t,{ sock_file file dir })
+
 allow nginx_t nginx_var_run_t:file manage_file_perms;
 allow nginx_t nginx_var_run_t:sock_file manage_file_perms;
 allow nginx_t nginx_var_run_t:dir rw_dir_perms;
 files_pid_filetrans(nginx_t,nginx_var_run_t, { file sock_file })
+
 sysnet_dns_name_resolve(nginx_t)
 corenet_tcp_sendrecv_all_if(nginx_t)
 corenet_tcp_sendrecv_all_nodes(nginx_t)
@@ -85,16 +89,18 @@ corenet_tcp_connect_all_ports(nginx_t)
 corenet_tcp_bind_all_ports(nginx_t)
 corenet_tcp_bind_all_nodes(nginx_t)
 allow nginx_t self:tcp_socket { listen accept };
+
 init_use_fds(nginx_t)
 init_use_script_ptys(nginx_t)
 domain_use_interactive_fds(nginx_t)
-allow nginx_t fs_t:filesystem associate;
+
+allow nginx_t fs_t:filesystem { getattr associate };
 allow nginx_t home_root_t:dir search;
 allow nginx_t user_home_dir_t:dir search;
 allow nginx_t httpd_sys_content_t:dir { read search getattr };
 allow nginx_t httpd_sys_content_t:file { read getattr open };
 allow nginx_t node_t:tcp_socket node_bind;
-allow nginx_t self:capability { setuid net_bind_service setgid };
+allow nginx_t self:capability { setuid net_bind_service setgid dac_override };
 allow nginx_t self:process { signal setrlimit };
 
 kernel_read_kernel_sysctls(nginx_t)

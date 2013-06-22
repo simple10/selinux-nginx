@@ -26,4 +26,4 @@
 # Custom location of HTML files
 /srv/nginx/www(/.*)?    gen_context(user_u:object_r:httpd_sys_content_t,s0)
 # Custom location cache files
-/srv/nginx/cache(/.*)?    gen_context(system_u:object_r:nginx_var_log_t,s0)
+/srv/nginx/cache(/.*)?    gen_context(system_u:object_r:nginx_var_lib_t,s0)
