@@ -1,3 +1,7 @@
+2013-06-22: RELEASE 1.1.1
+            ------------------------
+            * Added support for Nginx cache files
+
 2013-06-18: RELEASE 1.1.0
             ------------------------
             * Modified policy for Debian
